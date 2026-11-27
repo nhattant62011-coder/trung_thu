@@ -1,0 +1,258 @@
+
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <cstdlib>
+using namespace std;
+namespace fs = std::filesystem;
+
+int main() {
+    fs::create_directories("Dem-Ram-Viet-Nam");
+
+    ofstream file("Dem-Ram-Viet-Nam/index.html");
+
+    file << R"HTML(
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đêm Rằm Việt Nam</title>
+<style>
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{
+ margin:0;background:#0a0d18;color:#fff;
+ font-family:Arial,sans-serif;overflow-x:hidden
+}
+header{
+ position:sticky;top:0;z-index:10;
+ background:#101528eF;padding:16px;
+ display:flex;justify-content:space-between;
+ align-items:center;flex-wrap:wrap
+}
+.logo{font-size:22px;color:#ffd700;font-weight:bold}
+nav{display:flex;gap:12px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none;padding:8px}
+nav a:hover{color:#ffd700}
+section{padding:65px 7%;min-height:80vh}
+.hero{
+ text-align:center;min-height:90vh;
+ display:flex;flex-direction:column;
+ justify-content:center;align-items:center;
+ background:radial-gradient(circle at top,#39234f,#0a0d18 65%)
+}
+h1{font-size:clamp(35px,7vw,70px);color:#ffd700}
+h2{color:#ffd700;font-size:32px}
+p{line-height:1.7;color:#ddd}
+.btn{
+ background:#d84b2a;color:white;border:0;
+ border-radius:25px;padding:13px 22px;
+ cursor:pointer;font-size:16px;margin:8px
+}
+.btn:hover{background:#ff8c42;transform:translateY(-2px)}
+.grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+ gap:20px;margin-top:25px
+}
+.card{
+ background:#1a1f2e;padding:22px;border-radius:18px;
+ border:1px solid #49334e;text-align:center;
+ transition:.3s
+}
+.card:hover{transform:translateY(-7px);border-color:#ffd700}
+.lantern{font-size:65px;filter:drop-shadow(0 0 15px #ff9b38)}
+select,input{
+ padding:12px;border-radius:10px;border:1px solid #777;
+ background:#1a1f2e;color:white;margin:7px
+}
+#preview{
+ margin:25px auto;padding:40px;
+ max-width:600px;min-height:220px;text-align:center;
+ border-radius:20px;background:linear-gradient(135deg,#39234f,#101528);
+ border:1px solid #ffd700
+}
+.star{
+ position:fixed;color:#ffd700;pointer-events:none;
+ animation:twinkle 2s infinite alternate
+}
+@keyframes twinkle{from{opacity:.2}to{opacity:1}}
+footer{text-align:center;padding:30px;color:#aaa}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">🏮 ĐÊM RẰM VIỆT NAM</div>
+ <nav>
+  <a href="#home">Trang chủ</a>
+  <a href="#discover">Khám phá</a>
+  <a href="#create">Sáng tạo</a>
+  <a href="#gallery">Triển lãm</a>
+  <a href="#memory">Kỷ niệm</a>
+ </nav>
+</header>
+
+<section class="hero" id="home">
+ <div style="font-size:85px">🌕</div>
+ <h1>Đêm Rằm Việt Nam</h1>
+ <p>Thắp sáng ký ức – Lan tỏa nét đẹp văn hóa Việt</p>
+ <a href="#discover"><button class="btn">Khám phá ngay ✨</button></a>
+</section>
+
+<section id="discover">
+ <h2>🏮 Khám phá đèn lồng</h2>
+ <p>Khám phá những chiếc đèn lồng mang sắc màu Trung Thu.</p>
+ <div class="grid" id="lanterns"></div>
+</section>
+
+<section id="create">
+ <h2>🎨 Xưởng sáng tạo</h2>
+ <p>Chọn hình dáng, màu sắc và bối cảnh cho tác phẩm của bạn.</p>
+ <div class="card">
+  <p>Hình dáng</p>
+  <select id="shape">
+   <option>Ngôi sao</option><option>Hình tròn</option>
+   <option>Con cá</option><option>Con bướm</option>
+   <option>Thỏ</option><option>Khối lập phương</option>
+  </select>
+  <p>Màu sắc</p>
+  <select id="color">
+   <option>Đỏ</option><option>Vàng</option>
+   <option>Xanh</option><option>Tím</option><option>Hồng</option>
+  </select>
+  <p>Bối cảnh</p>
+  <select id="scene">
+   <option>Phố cổ Hội An</option><option>Dòng sông đêm</option>
+   <option>Ngôi nhà thân thương</option><option>Sân trường</option>
+  </select>
+  <p>Tên tác phẩm</p>
+  <input id="artname" placeholder="Nhập tên tác phẩm">
+  <br>
+  <button class="btn" onclick="createArt()">Tạo tác phẩm ✨</button>
+ </div>
+ <div id="preview">
+  <h2>Tác phẩm của bạn</h2>
+  <div id="art" style="font-size:75px">🏮</div>
+  <p id="description">Hãy chọn các tùy chọn để bắt đầu!</p>
+ </div>
+</section>
+
+<section id="gallery">
+ <h2>🖼️ Triển lãm</h2>
+ <p>Những tác phẩm minh họa trong bản demo.</p>
+ <div class="grid" id="galleryList"></div>
+</section>
+
+<section id="memory">
+ <h2>💌 Góc kỷ niệm</h2>
+ <div class="card">
+  <p>Viết lời nhắn của bạn:</p>
+  <input id="memoryText" placeholder="Một kỷ niệm Trung Thu...">
+  <button class="btn" onclick="saveMemory()">Lưu kỷ niệm</button>
+ </div>
+ <div id="memories" class="grid"></div>
+</section>
+
+<footer>
+ 🏮 ĐÊM RẰM VIỆT NAM 🏮
+ <p>Một dự án trải nghiệm văn hóa Trung Thu.</p>
+</footer>
+
+<script>
+const lanternData=[
+ ["🌟","Đèn ông sao"],["🏮","Đèn lồng đỏ"],
+ ["🐟","Đèn cá chép"],["🦋","Đèn bươm bướm"],
+ ["🐰","Đèn thỏ"],["🌙","Đèn mặt trăng"],
+ ["✨","Đèn ngôi sao"]
+];
+
+const lanterns=document.getElementById("lanterns");
+lanternData.forEach(item=>{
+ lanterns.innerHTML+=`
+ <div class="card">
+  <div class="lantern">${item[0]}</div>
+  <h3>${item[1]}</h3>
+  <p>Ánh sáng lung linh trong đêm rằm.</p>
+ </div>`;
+});
+
+function createArt(){
+ const shapes={
+  "Ngôi sao":"🌟","Hình tròn":"🏮","Con cá":"🐟",
+  "Con bướm":"🦋","Thỏ":"🐰","Khối lập phương":"🎁"
+ };
+ const shape=document.getElementById("shape").value;
+ const color=document.getElementById("color").value;
+ const scene=document.getElementById("scene").value;
+ const name=document.getElementById("artname").value||"Tác phẩm mới";
+ document.getElementById("art").textContent=shapes[shape];
+ document.getElementById("description").textContent=
+  name+" – "+shape+" màu "+color+" – "+scene;
+}
+
+const galleryList=document.getElementById("galleryList");
+["Đêm hội trăng rằm","Sắc màu tuổi thơ","Ánh sáng Hội An"].forEach((name,i)=>{
+ galleryList.innerHTML+=`
+ <div class="card">
+  <div class="lantern">${["🏮","🌕","🎆"][i]}</div>
+  <h3>${name}</h3>
+  <p>Tác phẩm minh họa</p>
+  <button class="btn" onclick="vote(this)">❤️ Bình chọn <span>0</span></button>
+ </div>`;
+});
+
+function vote(button){
+ let count=Number(button.querySelector("span").textContent);
+ button.querySelector("span").textContent=count+1;
+}
+
+function saveMemory(){
+ const input=document.getElementById("memoryText");
+ if(!input.value.trim())return;
+ const memories=JSON.parse(localStorage.getItem("memories")||"[]");
+ memories.push(input.value.trim());
+ localStorage.setItem("memories",JSON.stringify(memories));
+ input.value="";
+ showMemories();
+}
+function showMemories(){
+ const memories=JSON.parse(localStorage.getItem("memories")||"[]");
+ document.getElementById("memories").innerHTML=memories.map(
+  text=>`<div class="card">💌 ${escapeHTML(text)}</div>`
+ ).join("");
+}
+function escapeHTML(text){
+ return text.replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+showMemories();
+
+for(let i=0;i<35;i++){
+ const star=document.createElement("div");
+ star.className="star";
+ star.textContent="✦";
+ star.style.left=Math.random()*100+"%";
+ star.style.top=Math.random()*100+"%";
+ star.style.animationDelay=Math.random()*2+"s";
+ document.body.appendChild(star);
+}
+</script>
+</body>
+</html>
+)HTML";
+
+    file.close();
+
+    cout << "Da tao website thanh cong!\n";
+
+#ifdef _WIN32
+    system("powershell -NoProfile -Command \"Compress-Archive -Path 'Dem-Ram-Viet-Nam\\*' -DestinationPath 'Dem-Ram-Viet-Nam.zip' -Force\"");
+    system("start Dem-Ram-Viet-Nam\\index.html");
+#else
+    cout << "Hay dung lenh zip -r Dem-Ram-Viet-Nam.zip Dem-Ram-Viet-Nam\n";
+#endif
+
+    cout << "Hoan tat!\n";
+    return 0;
+}
